@@ -1,9 +1,19 @@
 import { useState } from "react";
 import { Column } from "../types";
 import ColumnContainer from "./ColumnContainer";
+
+import { DndContext } from "@dnd-kit/core";
+import { SortableContext } from "@dnd-kit/sortable";
+import { useMemo } from "react";
+import { Id } from "../types";
+
+
+
+
 function KanbanBoard(){
 
     const [columns, setColumns] = useState<Column[]>([]);
+    const columnsId = useMemo(() => columns.map((col) => col.id), [columns])
     console.log(columns)
 
 
@@ -18,11 +28,18 @@ function KanbanBoard(){
     overflow-x-auto 
     overflow-y-hidden 
     px-[40px]"  >
+
+        <DndContext>
         <div className="m-auto flex gap-4">
             <div className="flex gap-4" >
+                <SortableContext items={columnsId}>
                 {columns.map((col) =>(
-                <ColumnContainer column={col}  ></ColumnContainer>
-            ))}
+                <ColumnContainer 
+                key={col.id} 
+                column={col} 
+                deleteColumn={deleteColumn}
+                 ></ColumnContainer>
+            ))}</SortableContext>
             </div>
             <button onClick={() => {
                 createNewColumn();
@@ -39,8 +56,8 @@ function KanbanBoard(){
             ring-rose-500 
             hover:ring-2 ">
                 Add Column</button>
-        </div>
-        
+        </div>   
+        </DndContext>
     </div>
     );
 
@@ -53,6 +70,12 @@ function KanbanBoard(){
         };
     
         setColumns([...columns, columnToAdd]);
+      }
+
+      function deleteColumn(id:Id)
+      {
+        const filteredColumns = columns.filter((col) => col.id !== id);
+        setColumns(filteredColumns);
       }
 }
 

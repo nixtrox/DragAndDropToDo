@@ -1,7 +1,8 @@
 import { Column } from "../types";
-
+import { Id } from "../types";
 interface Props{
     column: Column;
+    deleteColumn: (id: Id) => void;
 }
 
 
@@ -9,7 +10,7 @@ interface Props{
 
 function ColumnContainer(props: Props)
 {
-   const {column} = props;
+   const {column, deleteColumn} = props;
     return <div className="
     bg-mainBackgroundColor 
     color-white
@@ -52,7 +53,17 @@ function ColumnContainer(props: Props)
             </div>
          {column.title}
          </div>
+         <button className="
+         hover:stroke-white
+         hover:bg-columnBackgroundColor
+         rounded
+         px-1
+         py-2"
+          onClick={() => {
+            deleteColumn(column.id)
+          }} >Delete</button>
          </div>
+         
 
          
       
