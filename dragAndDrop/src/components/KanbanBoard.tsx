@@ -2,10 +2,13 @@ import { useState } from "react";
 import { Column } from "../types";
 import ColumnContainer from "./ColumnContainer";
 
-import { DndContext } from "@dnd-kit/core";
-import { SortableContext } from "@dnd-kit/sortable";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor } from "@dnd-kit/core";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { useMemo } from "react";
 import { Id } from "../types";
+import { createPortal } from "react-dom";
+import { useSensors } from "@dnd-kit/core";
+
 
 
 
@@ -14,7 +17,14 @@ function KanbanBoard(){
 
     const [columns, setColumns] = useState<Column[]>([]);
     const columnsId = useMemo(() => columns.map((col) => col.id), [columns])
-    console.log(columns)
+    
+    const [activeColumn, setActiveColumn] = useState<Column | null>(null);
+
+    const sensors = useSensors(useSensor(PointerSensor, {
+        activationConstraint: {
+            distance: 300,
+        }
+    }));
 
 
 
@@ -29,7 +39,7 @@ function KanbanBoard(){
     overflow-y-hidden 
     px-[40px]"  >
 
-        <DndContext>
+        <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className="m-auto flex gap-4">
             <div className="flex gap-4" >
                 <SortableContext items={columnsId}>
@@ -39,7 +49,8 @@ function KanbanBoard(){
                 column={col} 
                 deleteColumn={deleteColumn}
                  ></ColumnContainer>
-            ))}</SortableContext>
+                ))}
+                </SortableContext>
             </div>
             <button onClick={() => {
                 createNewColumn();
@@ -57,6 +68,15 @@ function KanbanBoard(){
             hover:ring-2 ">
                 Add Column</button>
         </div>   
+
+            {createPortal(
+                <DragOverlay>
+                {activeColumn && (<ColumnContainer column={activeColumn} deleteColumn={deleteColumn}
+                />
+                )}
+                </DragOverlay>, document.body
+            )}
+            
         </DndContext>
     </div>
     );
@@ -77,6 +97,38 @@ function KanbanBoard(){
         const filteredColumns = columns.filter((col) => col.id !== id);
         setColumns(filteredColumns);
       }
+
+
+      function onDragStart(event: DragStartEvent)
+      {
+        if(event.active.data.current?.type === "Column"){
+            setActiveColumn(event.active.data.current.column);
+            return;
+        }
+      }
+
+      function onDragEnd(event: DragEndEvent)
+      {
+        const {active,over} = event;
+        if(!over) return;
+        const activeColumnId = active.id;
+        const overColumnId = over.id;
+        if(activeColumnId === overColumnId)return;
+
+
+        setColumns((columns) =>{
+
+            const activeColumnIndex = columns.findIndex((col) => col.id === activeColumnId);
+
+            const overColumnIndex = columns.findIndex((col) => col.id === overColumnId);
+
+            return arrayMove(columns, activeColumnIndex,overColumnIndex);
+
+
+        })
+
+      }
+
 }
 
 function generateId(){

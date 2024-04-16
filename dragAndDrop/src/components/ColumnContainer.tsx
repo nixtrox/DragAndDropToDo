@@ -1,5 +1,7 @@
+import { useSortable } from "@dnd-kit/sortable";
 import { Column } from "../types";
 import { Id } from "../types";
+import {CSS} from "@dnd-kit/utilities";
 interface Props{
     column: Column;
     deleteColumn: (id: Id) => void;
@@ -11,7 +13,43 @@ interface Props{
 function ColumnContainer(props: Props)
 {
    const {column, deleteColumn} = props;
-    return <div className="
+
+
+    const {setNodeRef,attributes,listeners, transform,transition, isDragging} = 
+    useSortable({
+    id: column.id,
+    data: {
+      type: "Column",
+      column,
+    },
+   });
+
+
+   const style = {
+    transition,
+    transform: CSS.Transform.toString(transform),
+
+   };
+
+   if(isDragging)
+    {
+      return <div ref={setNodeRef} style={style} className="
+      bg-mainBackgroundColor 
+      opacity-30
+      border-2
+      border-rose-500 
+      color-white
+      w-[350px]
+      h-[500px]
+      max-h-[500px]
+      rounded-md
+      flex
+      flex-col
+      text-white" ></div>
+    }
+
+    return (
+    <div ref={setNodeRef} style={style}  className="
     bg-mainBackgroundColor 
     color-white
     w-[350px]
@@ -23,8 +61,11 @@ function ColumnContainer(props: Props)
     text-white" 
   
     >
-        
-        <div className="
+        {/* col title*/}
+        <div 
+        {...attributes}
+        {...listeners}
+        className="
         bg-mainBackgroundColor
         text-md
         h-[60px]
@@ -73,6 +114,7 @@ function ColumnContainer(props: Props)
         <div className="flex flex-grow"  >asd</div>
         <div>Footer</div>
         </div>
+    )
 }
 
 export default ColumnContainer;

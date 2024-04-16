@@ -9,7 +9,7 @@ const jsonParser = new bodyParser.json();
 
 app.use(cors());
 
-const db = mysql.craetePool({
+const db = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '',
