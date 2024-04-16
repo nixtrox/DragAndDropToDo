@@ -5,3 +5,14 @@ npm install react-dnd @types/react-dnd
 
 
 npm install @dnd-kit/core @dnd-kit/sortable
+
+npm install express
+npm install mysql2
+npm install cors
+
+
+command after cloning
+(move into the correct folder)
+npm init
+npm i react
+npm run dev
