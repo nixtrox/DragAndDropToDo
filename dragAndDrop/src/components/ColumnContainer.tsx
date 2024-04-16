@@ -2,9 +2,15 @@ import { useSortable } from "@dnd-kit/sortable";
 import { Column } from "../types";
 import { Id } from "../types";
 import {CSS} from "@dnd-kit/utilities";
+import { Task } from "../types";
+import TaskCard from "./Taskcard";
 interface Props{
     column: Column;
     deleteColumn: (id: Id) => void;
+
+    createTask: (columnId:Id) => void;
+    tasks: Task[];
+    deleteTask: (id:Id) => void
 }
 
 
@@ -12,7 +18,7 @@ interface Props{
 
 function ColumnContainer(props: Props)
 {
-   const {column, deleteColumn} = props;
+   const {column, deleteColumn, createTask, tasks,deleteTask} = props;
 
 
     const {setNodeRef,attributes,listeners, transform,transition, isDragging} = 
@@ -106,13 +112,19 @@ function ColumnContainer(props: Props)
          </div>
          
 
-         
-      
+        <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto"  >
+          {tasks.map((task) =>(
+           <TaskCard key={task.id} task={task} deleteTask={deleteTask} ></TaskCard>
+           
+          ))}
+        </div>
 
-
-
-        <div className="flex flex-grow"  >asd</div>
-        <div>Footer</div>
+        <button className="flex gap-2 items-center border-columnBackgroundColor border-2 rounded-md p-4 border-x-columnBackgroundColor hover:gb-mainBackgroundColor hover:text-rose-500 active:bg-black 
+        "
+        onClick={() =>{
+          createTask(column.id)
+        }}
+        >Add Task</button>
         </div>
     )
 }

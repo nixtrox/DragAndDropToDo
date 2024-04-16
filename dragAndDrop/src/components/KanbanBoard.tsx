@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Column } from "../types";
+import { Column, Task } from "../types";
 import ColumnContainer from "./ColumnContainer";
 
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor } from "@dnd-kit/core";
@@ -18,6 +18,8 @@ function KanbanBoard(){
     const [columns, setColumns] = useState<Column[]>([]);
     const columnsId = useMemo(() => columns.map((col) => col.id), [columns])
     
+    const [tasks, setTasks] = useState<Task[]>([]);
+
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
     const sensors = useSensors(useSensor(PointerSensor, {
@@ -48,6 +50,10 @@ function KanbanBoard(){
                 key={col.id} 
                 column={col} 
                 deleteColumn={deleteColumn}
+
+                createTask={createTask}
+                deleteTask={deleteTask}
+                tasks={tasks.filter((task) => task.columnId === col.id)}
                  ></ColumnContainer>
                 ))}
                 </SortableContext>
@@ -71,7 +77,14 @@ function KanbanBoard(){
 
             {createPortal(
                 <DragOverlay>
-                {activeColumn && (<ColumnContainer column={activeColumn} deleteColumn={deleteColumn}
+                {activeColumn && (<ColumnContainer 
+                column={activeColumn} 
+                deleteColumn={deleteColumn}
+
+                createTask={createTask}
+                deleteTask={deleteTask}
+                tasks={tasks.filter((task) => task.columnId === activeColumn.id)}
+
                 />
                 )}
                 </DragOverlay>, document.body
@@ -81,6 +94,20 @@ function KanbanBoard(){
     </div>
     );
 
+    function createTask(columnId: Id){
+        const newTask: Task = {
+            id: generateId(),
+            columnId,
+            content: `Task ${tasks.length + 1}`
+        }
+        setTasks([...tasks, newTask])
+    }
+
+    function deleteTask(id: Id){
+        const newTasks = tasks.filter((task) => task.id !== id);
+        setTasks(newTasks)
+
+    }
 
 
     function createNewColumn() {
