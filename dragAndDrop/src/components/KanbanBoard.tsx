@@ -68,6 +68,7 @@ function KanbanBoard(){
             cursor-pointer 
             rounded-lg 
             bg-mainBackgroundColor 
+            font-mono
             border-z 
             border-colimnBackgroundColor 
             p-4 
