@@ -2,21 +2,103 @@ import React from "react";
 import { Task } from "../types";
 import { useState } from "react";
 import { Id } from "../types";
+import { DragOverlay } from "@dnd-kit/core";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import {CSS} from "@dnd-kit/utilities";
+
+
+
+
 
 
 interface Props{
     task: Task;
     deleteTask: (id:Id) => void
+    updateTask: (id:Id, content:string) => void
 
 }
 
 
-function TaskCard({task, deleteTask} : Props){
 
-    const [mouseIsOver, setMouseIsOver] = useState(false)
+
+function TaskCard({task, deleteTask,updateTask} : Props){
+
+    const [mouseIsOver, setMouseIsOver] = useState(false);
+    const [editMode, setEditMode] = useState(false);
+    const toggleEditMode = ()=>{
+        setEditMode((prev) => !prev)
+        {
+            setMouseIsOver(false);
+        }
+    }
+
+
+    const {
+        setNodeRef,
+        attributes,
+        listeners,
+        transform,
+        transition,
+        isDragging,
+      } = useSortable({
+        id: task.id,
+        data: {
+          type: "Task",
+          task,
+        },
+        disabled: editMode,
+      });
+
+      const style = {
+        transition,
+        transform: CSS.Transform.toString(transform),
+    
+       };
+    
+
+       if(editMode)
+       {
+        return (
+            <div 
+            
+           ref={setNodeRef}
+           style={style}
+           {...attributes}
+           {...listeners}
+      
+            
+            className="bg-black p-2 h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-purple-500 cursor-grab relative"
+             >
+               <textarea className="bg-black rounded.md"
+               value={task.content}
+               autoFocus
+               placeholder="Feladat leírása"
+               onBlur={toggleEditMode}
+               onKeyDown={e =>{
+                if(e.key == "Enter")toggleEditMode();
+               }}
+               onChange={e => updateTask(task.id, e.target.value)}
+               ></textarea>
+    
+                
+                </div>
+              
+        )
+       }
+
+
 
     return(
-        <div className="bg-black p-2 h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-purple-500 cursor-grab relative"
+       
+        <div 
+        onClick={toggleEditMode}
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+  
+        
+        className="bg-black p-2 h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-purple-500 cursor-grab relative"
          onMouseEnter={() => setMouseIsOver(true)}
          onMouseLeave={() => setMouseIsOver(false)}
          >
@@ -35,6 +117,7 @@ function TaskCard({task, deleteTask} : Props){
 
             
             </div>
+          
     )
 }
 

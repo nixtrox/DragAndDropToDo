@@ -24,7 +24,7 @@ function KanbanBoard(){
 
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: {
-            distance: 300,
+            distance: 10,
         }
     }));
 
@@ -50,9 +50,10 @@ function KanbanBoard(){
                 key={col.id} 
                 column={col} 
                 deleteColumn={deleteColumn}
-
+                updateColumn={updateColumn}
                 createTask={createTask}
                 deleteTask={deleteTask}
+                updateTask={updateTask}
                 tasks={tasks.filter((task) => task.columnId === col.id)}
                  ></ColumnContainer>
                 ))}
@@ -80,9 +81,10 @@ function KanbanBoard(){
                 {activeColumn && (<ColumnContainer 
                 column={activeColumn} 
                 deleteColumn={deleteColumn}
-
+                updateColumn={updateColumn}
                 createTask={createTask}
                 deleteTask={deleteTask}
+                updateTask={updateTask}
                 tasks={tasks.filter((task) => task.columnId === activeColumn.id)}
 
                 />
@@ -109,6 +111,24 @@ function KanbanBoard(){
 
     }
 
+    function updateTask(id:Id, content:string)
+    {
+        const newTasks = tasks.map(task =>{
+            if(task.id !== id)return task;
+            return{...task, content};
+        })
+        setTasks(newTasks)
+    }
+
+    function updateColumn(id:Id, title:string)
+    {
+        const newColumn = columns.map(col => {
+            if(col.id !== id ) return col;
+            return {...col, title}
+        })
+        setColumns(newColumn);
+    }
+
 
     function createNewColumn() {
         const columnToAdd: Column = {
@@ -124,6 +144,8 @@ function KanbanBoard(){
         const filteredColumns = columns.filter((col) => col.id !== id);
         setColumns(filteredColumns);
       }
+
+   
 
 
       function onDragStart(event: DragStartEvent)

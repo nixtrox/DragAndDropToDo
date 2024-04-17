@@ -1,13 +1,16 @@
-import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { Column } from "../types";
 import { Id } from "../types";
 import {CSS} from "@dnd-kit/utilities";
 import { Task } from "../types";
 import TaskCard from "./Taskcard";
+import { useMemo, useState } from "react";
 interface Props{
     column: Column;
     deleteColumn: (id: Id) => void;
 
+    updateColumn: (id: Id, title: string) => void;
+    updateTask: (id:Id, content:string) => void;
     createTask: (columnId:Id) => void;
     tasks: Task[];
     deleteTask: (id:Id) => void
@@ -18,7 +21,12 @@ interface Props{
 
 function ColumnContainer(props: Props)
 {
-   const {column, deleteColumn, createTask, tasks,deleteTask} = props;
+   const {column, deleteColumn, createTask,updateColumn ,tasks,deleteTask, updateTask} = props;
+   const tasksIds = useMemo(() =>{
+    return tasks.map((task) => task.id)
+   },[tasks])
+
+   const [editMode,setEditMode] = useState(false)
 
 
     const {setNodeRef,attributes,listeners, transform,transition, isDragging} = 
@@ -71,6 +79,9 @@ function ColumnContainer(props: Props)
         <div 
         {...attributes}
         {...listeners}
+        onClick={() =>{
+          setEditMode(true)
+        }}
         className="
         bg-mainBackgroundColor
         text-md
@@ -98,7 +109,20 @@ function ColumnContainer(props: Props)
          rounded-full" >
             0
             </div>
-         {column.title}
+         
+         {!editMode && column.title}
+         {editMode && (
+         <input 
+         className="bg-black"
+         value={column.title}
+         onChange={e => updateColumn(column.id, e.target.value)}
+          autoFocus 
+          onBlur={() =>{
+          setEditMode(false);
+         }} onKeyDown={e=>{
+          if(e.key != "Enter") return;
+          setEditMode(false);
+         }} ></input>)}
          </div>
          <button className="
          hover:stroke-white
@@ -111,13 +135,16 @@ function ColumnContainer(props: Props)
           }} >Delete</button>
          </div>
          
-
+        
         <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto"  >
+        <SortableContext items={tasksIds}>
           {tasks.map((task) =>(
-           <TaskCard key={task.id} task={task} deleteTask={deleteTask} ></TaskCard>
+           <TaskCard key={task.id} task={task} updateTask={updateTask} deleteTask={deleteTask} ></TaskCard>
            
           ))}
+           </SortableContext>
         </div>
+       
 
         <button className="flex gap-2 items-center border-columnBackgroundColor border-2 rounded-md p-4 border-x-columnBackgroundColor hover:gb-mainBackgroundColor hover:text-rose-500 active:bg-black 
         "
