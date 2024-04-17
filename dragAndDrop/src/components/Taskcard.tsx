@@ -98,7 +98,7 @@ function TaskCard({task, deleteTask,updateTask} : Props){
         {...listeners}
   
         
-        className="bg-black p-2 h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-purple-500 cursor-grab relative"
+        className="bg-black p-2 h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-green-500 cursor-grab relative"
          onMouseEnter={() => setMouseIsOver(true)}
          onMouseLeave={() => setMouseIsOver(false)}
          >

@@ -127,6 +127,7 @@ function ColumnContainer(props: Props)
          <button className="
          hover:stroke-white
          hover:bg-columnBackgroundColor
+         hover:text-red-600
          rounded
          px-1
          py-2"
@@ -146,7 +147,7 @@ function ColumnContainer(props: Props)
         </div>
        
 
-        <button className="flex gap-2 items-center border-columnBackgroundColor border-2 rounded-md p-4 border-x-columnBackgroundColor hover:gb-mainBackgroundColor hover:text-rose-500 active:bg-black 
+        <button className="flex gap-2 items-center border-columnBackgroundColor border-2 rounded-md p-4 border-x-columnBackgroundColor hover:gb-mainBackgroundColor hover:text-green-500 active:bg-black 
         "
         onClick={() =>{
           createTask(column.id)
