@@ -51,7 +51,7 @@ function ColumnContainer(props: Props)
       bg-mainBackgroundColor 
       opacity-30
       border-2
-      border-rose-500 
+      border-neutral-900 
       color-white
       w-[350px]
       h-[500px]
@@ -64,7 +64,8 @@ function ColumnContainer(props: Props)
 
     return (
     <div ref={setNodeRef} style={style}  className="
-    bg-mainBackgroundColor 
+    bg-zinc-600 
+    font-mono
     color-white
     w-[350px]
     h-[500px]
@@ -83,7 +84,7 @@ function ColumnContainer(props: Props)
           setEditMode(true)
         }}
         className="
-        bg-mainBackgroundColor
+        bg-neutral-900
         text-md
         h-[60px]
         cursor-grab

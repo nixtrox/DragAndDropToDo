@@ -67,13 +67,16 @@ function KanbanBoard(){
             min-w-[350px] 
             cursor-pointer 
             rounded-lg 
-            bg-mainBackgroundColor 
+            bg-neutral-700 
             font-mono
+            text-white
             border-z 
             border-colimnBackgroundColor 
             p-4 
-            ring-rose-500 
-            hover:ring-2 ">
+            ring-green-500 
+            hover:ring-2
+            hover:bg-neutral-900
+            hover:text-green-400 ">
                 Add Column</button>
         </div>   
 

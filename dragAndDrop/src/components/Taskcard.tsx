@@ -67,9 +67,9 @@ function TaskCard({task, deleteTask,updateTask} : Props){
            {...listeners}
       
             
-            className="bg-black p-2 h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-purple-500 cursor-grab relative"
+            className="bg-neutral-900 p-2 h-[100px] items-center flex text-left rounded-xl ring-2 ring-inset ring-blue-500 cursor-grab relative"
              >
-               <textarea className="bg-black rounded.md"
+               <textarea className="bg-black rounded-md"
                value={task.content}
                autoFocus
                placeholder="Feladat leírása"
@@ -98,7 +98,7 @@ function TaskCard({task, deleteTask,updateTask} : Props){
         {...listeners}
   
         
-        className="bg-black p-2 h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-green-500 cursor-grab relative"
+        className="bg-neutral-800 p-2 h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-green-500 cursor-grab relative"
          onMouseEnter={() => setMouseIsOver(true)}
          onMouseLeave={() => setMouseIsOver(false)}
          >
@@ -111,7 +111,7 @@ function TaskCard({task, deleteTask,updateTask} : Props){
                             deleteTask(task.id)
                         }
                     }
-                    className="stroke-white absolute right-4 top-1/2-translate-y-1/2  rounded p-2"  >Delete</button>)
+                    className="stroke-white absolute right-4 top-1/2-translate-y-1/2  rounded p-2 hover:text-red-600"  >Delete</button>)
                
             }
 
