@@ -108,7 +108,7 @@ function ColumnContainer(props: Props)
          py-1
          text-sm
          rounded-full" >
-            0
+            {tasks.length}
             </div>
          
          {!editMode && column.title}
