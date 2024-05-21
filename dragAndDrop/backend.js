@@ -13,23 +13,23 @@ const db = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '',
-    database:'Placeholder'
+    database:'tododatabase'
  }).promise();
 
  app.get("/",(req,res) =>{
-    res.send("Placeholder")
+    res.send("tododatabase")
  })
 
- app.get("/Placeholder(cards/todoCards)", async(req,res)=>{
-    const temp = await db.query("SELECT * FROM Placeholder(cards/todoCards)")
+ app.get("/tododatabase", async(req,res)=>{
+    const temp = await db.query("SELECT * FROM tododatabase")
     const rows = temp[0];
     const fields = temp[1];
     res.send(rows)
  })
 
- app.post("/Placeholder(cards/todoCards)", jsonParser,async(req,res) =>{
-    let cardDAta = [req.body.numId, req.body.colId,req.body.content]
-    const insert = db.query("INSERT INTO Placeholder(cards/todoCards)(numId,colId,content) VALUES  (?,?,?)")
+ app.post("/tododatabase", jsonParser,async(req,res) =>{
+    let cardData = [req.body.id, req.body.columnId ,req.body.content]
+    const insert = db.query("INSERT INTO tododatabase(id,columnId,content) VALUES (?,?,?)",cardData)
     res.send("200");
  })
 
