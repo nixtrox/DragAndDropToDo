@@ -19,12 +19,19 @@ interface Props{
 
 
 
+
 function ColumnContainer(props: Props)
 {
+
+
+   
+
    const {column, deleteColumn, createTask,updateColumn ,tasks,deleteTask, updateTask} = props;
    const tasksIds = useMemo(() =>{
     return tasks.map((task) => task.id)
    },[tasks])
+
+   
 
    const [editMode,setEditMode] = useState(false)
 
@@ -146,6 +153,8 @@ function ColumnContainer(props: Props)
           ))}
            </SortableContext>
         </div>
+
+       
        
 
         <button className="flex gap-2 items-center border-columnBackgroundColor border-2 rounded-md p-4 border-x-columnBackgroundColor hover:gb-mainBackgroundColor hover:text-green-500 active:bg-black 

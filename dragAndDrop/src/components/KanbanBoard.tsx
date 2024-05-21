@@ -9,16 +9,53 @@ import { Id } from "../types";
 import { createPortal } from "react-dom";
 import { useSensors } from "@dnd-kit/core";
 
+const defaultCols: Column[] = [
+    {
+      id: "todo",
+      title: "Todo",
+    },
+    {
+      id: "wip",
+      title: "Work in progress",
+    },
+    {
+      id: "done",
+      title: "Done",
+    },
+  ];
 
+
+  const defaultTasks: Task[] = 
+  [
+    {
+        id: "1",
+        columnId: "todo",
+        content: "test",
+    },
+    {
+        id:"2",
+        columnId: "wip",
+        content:"WIP test",
+    },
+    {
+        id:"3",
+        columnId:"done",
+        content:"done test"
+    }
+
+
+  ];
+  
+  
 
 
 
 function KanbanBoard(){
 
-    const [columns, setColumns] = useState<Column[]>([]);
+    const [columns, setColumns] = useState<Column[]>(defaultCols);
     const columnsId = useMemo(() => columns.map((col) => col.id), [columns])
     
-    const [tasks, setTasks] = useState<Task[]>([]);
+    const [tasks, setTasks] = useState<Task[]>(defaultTasks);
 
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
@@ -27,6 +64,14 @@ function KanbanBoard(){
             distance: 10,
         }
     }));
+
+    const columnToAdd: Column = {
+        id: generateId(),
+        title: `Column ${columns.length + 1}`,
+      };
+  
+     
+
 
 
 
@@ -40,6 +85,7 @@ function KanbanBoard(){
     overflow-x-auto 
     overflow-y-hidden 
     px-[40px]"  >
+       
 
         <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className="m-auto flex gap-4">
@@ -55,8 +101,11 @@ function KanbanBoard(){
                 deleteTask={deleteTask}
                 updateTask={updateTask}
                 tasks={tasks.filter((task) => task.columnId === col.id)}
+
+
                  ></ColumnContainer>
                 ))}
+                
                 </SortableContext>
             </div>
             <button onClick={() => {
