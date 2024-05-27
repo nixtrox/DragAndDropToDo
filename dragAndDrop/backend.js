@@ -33,5 +33,7 @@ const db = mysql.createPool({
     res.send("200");
  })
 
+ app.update()
+
 
  app.listen("3000")

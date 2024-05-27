@@ -141,7 +141,7 @@ function ColumnContainer(props: Props)
          py-2"
           onClick={() => {
             deleteColumn(column.id)
-          }} >Delete</button>
+          }} ></button>
          </div>
          
         

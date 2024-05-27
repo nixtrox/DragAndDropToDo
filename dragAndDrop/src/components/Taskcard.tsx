@@ -25,12 +25,7 @@ function TaskCard({task, deleteTask,updateTask} : Props){
 
     const [mouseIsOver, setMouseIsOver] = useState(false);
     const [editMode, setEditMode] = useState(false);
-    const toggleEditMode = ()=>{
-        setEditMode((prev) => !prev)
-        {
-            setMouseIsOver(false);
-        }
-    }
+
 
 
     const {
@@ -49,11 +44,35 @@ function TaskCard({task, deleteTask,updateTask} : Props){
         disabled: editMode,
       });
 
+
+      
       const style = {
         transition,
         transform: CSS.Transform.toString(transform),
     
        };
+
+
+    const toggleEditMode = ()=>{
+        setEditMode((prev) => !prev)
+        {
+            setMouseIsOver(false);
+        }
+    }
+
+    if(isDragging)
+        {
+            return(
+                <div ref={setNodeRef} style={style} className="opacity-50  bg-neutral-900 p-2 h-[100px] items-center flex text-left rounded-xl ring-2 ring-inset ring-blue-500 cursor-grab relative" >
+
+                </div>
+            )
+
+        }
+
+
+   
+
     
 
        if(editMode)

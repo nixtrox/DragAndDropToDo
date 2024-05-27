@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Column, Task } from "../types";
 import ColumnContainer from "./ColumnContainer";
 
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { useMemo } from "react";
 import { Id } from "../types";
 import { createPortal } from "react-dom";
 import { useSensors } from "@dnd-kit/core";
+import { useEffect } from "react";
+import TaskCard from "./Taskcard";
 
 const defaultCols: Column[] = [
     {
@@ -55,7 +57,8 @@ function KanbanBoard(){
     const [columns, setColumns] = useState<Column[]>(defaultCols);
     const columnsId = useMemo(() => columns.map((col) => col.id), [columns])
     
-    const [tasks, setTasks] = useState<Task[]>(defaultTasks);
+    //const [tasks, setTasks] = useState<Task[]>(defaultTasks);
+    const [tasks, setTasks] = useState([] as Task[])
 
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
@@ -64,6 +67,50 @@ function KanbanBoard(){
             distance: 10,
         }
     }));
+
+
+    const [activeTask, setActiveTask] = useState<Task |null>(null)
+
+
+
+    async function load() {
+        const response = await fetch("http://localhost:3000/tododatabase");
+        const pulledTasks = await response.json() as Task[];
+        
+       
+    
+    //console.log(task[0])
+       //defaultTasks.push(task[0])
+       console.log(defaultTasks)
+
+
+       /*for(var k = 0; k < asd.length; k++)
+        {
+            console.log(asd[k])
+            setTasks([...tasks,asd[k]])
+           
+        }*/
+
+
+       // setTasks([...tasks,newTask2])
+
+       //setTasks([...tasks, asd])
+
+      
+        setTasks(pulledTasks)
+
+
+       console.log(tasks)
+       
+
+      }
+
+
+    
+    useEffect(()=>{
+    load();
+    },[])
+
 
     const columnToAdd: Column = {
         id: generateId(),
@@ -87,7 +134,7 @@ function KanbanBoard(){
     px-[40px]"  >
        
 
-        <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+        <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver} >
         <div className="m-auto flex gap-4">
             <div className="flex gap-4" >
                 <SortableContext items={columnsId}>
@@ -108,25 +155,7 @@ function KanbanBoard(){
                 
                 </SortableContext>
             </div>
-            <button onClick={() => {
-                createNewColumn();
-            }}    
-            className="h-[60px] 
-            w-[350px] 
-            min-w-[350px] 
-            cursor-pointer 
-            rounded-lg 
-            bg-neutral-700 
-            font-mono
-            text-white
-            border-z 
-            border-colimnBackgroundColor 
-            p-4 
-            ring-green-500 
-            hover:ring-2
-            hover:bg-neutral-900
-            hover:text-green-400 ">
-                Add Column</button>
+           
         </div>   
 
             {createPortal(
@@ -142,6 +171,12 @@ function KanbanBoard(){
 
                 />
                 )}
+                
+
+                {activeTask && <TaskCard task={activeTask} deleteTask={deleteTask} updateTask={updateTask} />}
+
+ 
+
                 </DragOverlay>, document.body
             )}
             
@@ -149,13 +184,30 @@ function KanbanBoard(){
     </div>
     );
 
-    function createTask(columnId: Id){
+    async function createTask(columnId: Id){
         const newTask: Task = {
             id: generateId(),
             columnId,
             content: `Task ${tasks.length + 1}`
         }
+
+        const Data = `{"columnId": "${newTask.columnId}", "content": "${newTask.content}"}`
+
+        
+        const sendComm = await fetch('http://localhost:3000/tododatabase',{
+            method:"POST",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: Data
+          })
+          await load();
+
+
+
         setTasks([...tasks, newTask])
+
     }
 
     function deleteTask(id: Id){
@@ -183,14 +235,6 @@ function KanbanBoard(){
     }
 
 
-    function createNewColumn() {
-        const columnToAdd: Column = {
-          id: generateId(),
-          title: `Column ${columns.length + 1}`,
-        };
-    
-        setColumns([...columns, columnToAdd]);
-      }
 
       function deleteColumn(id:Id)
       {
@@ -207,10 +251,17 @@ function KanbanBoard(){
             setActiveColumn(event.active.data.current.column);
             return;
         }
+
+        if(event.active.data.current?.type === "Task"){
+            setActiveTask(event.active.data.current.task);
+            return;
+        }
       }
 
       function onDragEnd(event: DragEndEvent)
       {
+        setActiveColumn(null);
+        setActiveTask(null);
         const {active,over} = event;
         if(!over) return;
         const activeColumnId = active.id;
@@ -230,6 +281,43 @@ function KanbanBoard(){
         })
 
       }
+
+
+      function onDragOver(event:DragOverEvent)
+      {
+        const {active,over} = event;
+        if(!over) return;
+        const activeId = active.id;
+        const overId = over.id;
+        if(activeId === overId)return;
+
+        const isActiveTask = active.data.current?.type === "Task";
+        const isOverTask = over.data.current?.type === "Task";
+
+        if(isActiveTask && isOverTask)
+        {
+           setTasks((tasks) => {
+            const activeIndex = tasks.findIndex((t) =>t.id === activeId);
+
+            const overIndex = tasks.findIndex((t) =>t.id === overId);
+
+
+            if(tasks[activeIndex].columnId !== tasks[overIndex].columnId)
+            {
+                tasks[activeIndex].columnId = tasks[overIndex].columnId
+            }
+
+
+            return arrayMove(tasks,activeIndex, overIndex)
+           })
+        }
+     
+
+
+      }
+
+
+      
 
 }
 
