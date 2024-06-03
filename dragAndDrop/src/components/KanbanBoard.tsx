@@ -27,26 +27,7 @@ const defaultCols: Column[] = [
   ];
 
 
-  const defaultTasks: Task[] = 
-  [
-    {
-        id: "1",
-        columnId: "todo",
-        content: "test",
-    },
-    {
-        id:"2",
-        columnId: "wip",
-        content:"WIP test",
-    },
-    {
-        id:"3",
-        columnId:"done",
-        content:"done test"
-    }
-
-
-  ];
+ 
   
   
 
@@ -81,20 +62,10 @@ function KanbanBoard(){
     
     //console.log(task[0])
        //defaultTasks.push(task[0])
-       console.log(defaultTasks)
+      
 
 
-       /*for(var k = 0; k < asd.length; k++)
-        {
-            console.log(asd[k])
-            setTasks([...tasks,asd[k]])
-           
-        }*/
-
-
-       // setTasks([...tasks,newTask2])
-
-       //setTasks([...tasks, asd])
+   
 
       
         setTasks(pulledTasks)
@@ -210,18 +181,47 @@ function KanbanBoard(){
 
     }
 
-    function deleteTask(id: Id){
+    async function deleteTask(id: Id){
         const newTasks = tasks.filter((task) => task.id !== id);
+
+        const deleteData = await fetch(`http://localhost:3000/tododatabase/${id}`,{
+          method:"DELETE",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          
+        })
+        await load();
         setTasks(newTasks)
 
     }
 
-    function updateTask(id:Id, content:string)
+    async function updateTask(id:Id, content:string)
     {
         const newTasks = tasks.map(task =>{
             if(task.id !== id)return task;
             return{...task, content};
         })
+
+
+           
+        const Data = `{"columnId": "${id}", "content": "${content}"}`
+        const sendComm = await fetch(`http://localhost:3000/tododatabase/${id}`,{
+            method:"PUT",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: Data
+          })
+           await load();
+
+
+
+
+
+
         setTasks(newTasks)
     }
 
@@ -258,7 +258,7 @@ function KanbanBoard(){
         }
       }
 
-      function onDragEnd(event: DragEndEvent)
+      async function onDragEnd(event: DragEndEvent)
       {
         setActiveColumn(null);
         setActiveTask(null);
@@ -266,6 +266,13 @@ function KanbanBoard(){
         if(!over) return;
         const activeColumnId = active.id;
         const overColumnId = over.id;
+  
+
+       
+      
+
+
+
         if(activeColumnId === overColumnId)return;
 
 
@@ -274,6 +281,12 @@ function KanbanBoard(){
             const activeColumnIndex = columns.findIndex((col) => col.id === activeColumnId);
 
             const overColumnIndex = columns.findIndex((col) => col.id === overColumnId);
+
+
+
+      
+
+
 
             return arrayMove(columns, activeColumnIndex,overColumnIndex);
 
